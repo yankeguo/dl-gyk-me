@@ -54,6 +54,14 @@ https://dl.gyk.me/example.com/config.txt?__sr=["foo","bar"]&__sr=["hello","world
 
 > Note: The `__sr` parameter is stripped from the proxied request and will not be sent to the target server.
 
+**Real-world Example: Install Claude Code in China**
+
+```bash
+curl -fsSL "https://dl.gyk.me/claude.ai/install.sh?__sr=%5B%22https%3A%2F%2Fstorage.googleapis.com%22%2C%22https%3A%2F%2Fdl.gyk.me%2Fstorage.googleapis.com%22%5D" | bash
+```
+
+This downloads the Claude Code install script via the proxy and replaces `https://storage.googleapis.com` with `https://dl.gyk.me/storage.googleapis.com` so that the binary download also goes through the proxy.
+
 ## Security
 
 The worker applies several security measures:
