@@ -35,20 +35,22 @@ Use the `__sr` (simple replace) query parameter to perform text replacements on 
 **Format:**
 
 ```
-__sr=old_text:new_text
+__sr=["old_text", "new_text"]
 ```
 
 **Example:**
 
 ```
-https://dl.gyk.me/example.com/config.txt?__sr=localhost:production.example.com
+https://dl.gyk.me/example.com/config.txt?__sr=["localhost","production.example.com"]
 ```
 
 **Multiple Replacements:**
 
 ```
-https://dl.gyk.me/example.com/config.txt?__sr=foo:bar&__sr=hello:world
+https://dl.gyk.me/example.com/config.txt?__sr=["foo","bar"]&__sr=["hello","world"]
 ```
+
+> Note: The JSON array must be URL-encoded in practice. For example, `["foo","bar"]` becomes `%5B%22foo%22%2C%22bar%22%5D`.
 
 > Note: The `__sr` parameter is stripped from the proxied request and will not be sent to the target server.
 

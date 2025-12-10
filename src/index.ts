@@ -20,16 +20,20 @@ export default {
 			return new Response('Invalid domain format', { status: 400 });
 		}
 
-		// 解析 __sr 参数，格式: __sr=old:new
+		// 解析 __sr 参数，格式: __sr=["old", "new"]
 		const replaceParams = url.searchParams.getAll('__sr');
 		const replacements: Array<{ old: string; new: string }> = [];
 		for (const param of replaceParams) {
-			const colonIndex = param.indexOf(':');
-			if (colonIndex > 0) {
-				replacements.push({
-					old: param.substring(0, colonIndex),
-					new: param.substring(colonIndex + 1),
-				});
+			try {
+				const parsed = JSON.parse(param);
+				if (Array.isArray(parsed) && parsed.length === 2 && typeof parsed[0] === 'string' && typeof parsed[1] === 'string') {
+					replacements.push({
+						old: parsed[0],
+						new: parsed[1],
+					});
+				}
+			} catch {
+				// 忽略解析失败的参数
 			}
 		}
 
