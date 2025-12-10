@@ -20,8 +20,26 @@ export default {
 			return new Response('Invalid domain format', { status: 400 });
 		}
 
+		// 解析 __sr 参数，格式: __sr=old:new
+		const replaceParams = url.searchParams.getAll('__sr');
+		const replacements: Array<{ old: string; new: string }> = [];
+		for (const param of replaceParams) {
+			const colonIndex = param.indexOf(':');
+			if (colonIndex > 0) {
+				replacements.push({
+					old: param.substring(0, colonIndex),
+					new: param.substring(colonIndex + 1),
+				});
+			}
+		}
+
+		// 构建目标 URL 的查询参数，移除 __sr 参数
+		const targetSearchParams = new URLSearchParams(url.searchParams);
+		targetSearchParams.delete('__sr');
+		const targetSearch = targetSearchParams.toString() ? `?${targetSearchParams.toString()}` : '';
+
 		// 构建目标 URL
-		const targetUrl = `https://${targetHost}${targetPath}${url.search}`;
+		const targetUrl = `https://${targetHost}${targetPath}${targetSearch}`;
 
 		// 构建转发请求的 headers，移除一些不应该转发的 headers
 		const headers = new Headers(request.headers);
@@ -55,7 +73,19 @@ export default {
 		// 覆盖 Content-Type 为二进制流，防止浏览器识别为 HTML
 		responseHeaders.set('Content-Type', 'application/octet-stream');
 
-		return new Response(response.body, {
+		// 如果有文本替换需求，读取响应体并进行替换
+		let responseBody: BodyInit | null = response.body;
+		if (replacements.length > 0) {
+			let text = await response.text();
+			for (const replacement of replacements) {
+				text = text.replaceAll(replacement.old, replacement.new);
+			}
+			responseBody = text;
+			// 更新 Content-Length
+			responseHeaders.set('Content-Length', new TextEncoder().encode(text).length.toString());
+		}
+
+		return new Response(responseBody, {
 			status: response.status,
 			statusText: response.statusText,
 			headers: responseHeaders,
