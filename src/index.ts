@@ -20,8 +20,11 @@ export default {
 			return new Response('Invalid domain format', { status: 400 });
 		}
 
-		// 解析 __sr 参数，格式: __sr=["old", "new"]
-		const replaceParams = url.searchParams.getAll('__sr');
+		// 解析 __replace (或 __sr 向后兼容) 参数，格式: __replace=["old", "new"]
+		const replaceParams = [
+			...url.searchParams.getAll('__replace'),
+			...url.searchParams.getAll('__sr'),
+		];
 		const replacements: Array<{ old: string; new: string }> = [];
 		for (const param of replaceParams) {
 			try {
@@ -37,8 +40,9 @@ export default {
 			}
 		}
 
-		// 构建目标 URL 的查询参数，移除 __sr 参数
+		// 构建目标 URL 的查询参数，移除 __replace 和 __sr 参数
 		const targetSearchParams = new URLSearchParams(url.searchParams);
+		targetSearchParams.delete('__replace');
 		targetSearchParams.delete('__sr');
 		const targetSearch = targetSearchParams.toString() ? `?${targetSearchParams.toString()}` : '';
 

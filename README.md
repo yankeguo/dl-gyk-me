@@ -30,34 +30,34 @@ https://github.com/user/repo/releases/download/v1.0.0/app.zip
 
 ### Text Replacement
 
-Use the `__sr` (simple replace) query parameter to perform text replacements on the response body.
+Use the `__replace` query parameter to perform text replacements on the response body.
 
 **Format:**
 
 ```
-__sr=["old_text", "new_text"]
+__replace=["old_text", "new_text"]
 ```
 
 **Example:**
 
 ```
-https://dl.gyk.me/example.com/config.txt?__sr=["localhost","production.example.com"]
+https://dl.gyk.me/example.com/config.txt?__replace=["localhost","production.example.com"]
 ```
 
 **Multiple Replacements:**
 
 ```
-https://dl.gyk.me/example.com/config.txt?__sr=["foo","bar"]&__sr=["hello","world"]
+https://dl.gyk.me/example.com/config.txt?__replace=["foo","bar"]&__replace=["hello","world"]
 ```
 
 > Note: The JSON array must be URL-encoded in practice. For example, `["foo","bar"]` becomes `%5B%22foo%22%2C%22bar%22%5D`.
 
-> Note: The `__sr` parameter is stripped from the proxied request and will not be sent to the target server.
+> Note: The `__replace` parameter is stripped from the proxied request and will not be sent to the target server. The old `__sr` parameter is still supported for backward compatibility.
 
 **Real-world Example: Install Claude Code in China**
 
 ```bash
-curl -fsSL "https://dl.gyk.me/claude.ai/install.sh?__sr=%5B%22https%3A%2F%2Fstorage.googleapis.com%22%2C%22https%3A%2F%2Fdl.gyk.me%2Fstorage.googleapis.com%22%5D" | bash
+curl -fsSL "https://dl.gyk.me/claude.ai/install.sh?__replace=%5B%22https%3A%2F%2Fstorage.googleapis.com%22%2C%22https%3A%2F%2Fdl.gyk.me%2Fstorage.googleapis.com%22%5D" | bash
 ```
 
 This downloads the Claude Code install script via the proxy and replaces `https://storage.googleapis.com` with `https://dl.gyk.me/storage.googleapis.com` so that the binary download also goes through the proxy.
