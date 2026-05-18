@@ -75,16 +75,16 @@ The worker applies several security measures:
 
 ```bash
 # Install dependencies
-npm install
+bun install
 
 # Start development server
-npm run dev
+bun run dev
 
 # Run tests
-npm test
+bun test
 
 # Deploy to Cloudflare
-npm run deploy
+bun run deploy
 ```
 
 ## License
